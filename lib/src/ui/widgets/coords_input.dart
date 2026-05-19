@@ -14,6 +14,7 @@ class CoordsInput extends StatefulWidget {
     this.initialCoordinate,
     this.initialUtmCoordinate,
     this.onChanged,
+    this.onValueChanged,
     this.locationService,
     this.mode,
     super.key,
@@ -22,6 +23,7 @@ class CoordsInput extends StatefulWidget {
   final EditorCoordinate? initialCoordinate;
   final UtmCoordinate? initialUtmCoordinate;
   final ValueChanged<EditorCoordinate?>? onChanged;
+  final ValueChanged<Object?>? onValueChanged;
   final LocationService? locationService;
   final CoordinateInputMode? mode;
 
@@ -36,7 +38,7 @@ class _CoordsInputState extends State<CoordsInput> {
   bool _isSyncing = false;
   bool _isApplyingTextInput = false;
   bool _suppressOnChanged = false;
-  EditorCoordinate? _lastReportedCoordinate;
+  Object? _lastReportedValue;
 
   @override
   void initState() {
@@ -50,7 +52,7 @@ class _CoordsInputState extends State<CoordsInput> {
           widget.locationService ?? const GeolocatorLocationService(),
       mode: widget.mode,
     )..addListener(_handleViewModelChanged);
-    _lastReportedCoordinate = _viewModel.coordinate;
+    _lastReportedValue = _viewModel.currentValue;
     _syncControllers();
   }
 
@@ -76,7 +78,7 @@ class _CoordsInputState extends State<CoordsInput> {
         coordinate: widget.initialCoordinate,
         utmCoordinate: widget.initialUtmCoordinate,
       );
-      _lastReportedCoordinate = _viewModel.coordinate;
+      _lastReportedValue = _viewModel.currentValue;
       _suppressOnChanged = false;
     }
   }
@@ -98,12 +100,12 @@ class _CoordsInputState extends State<CoordsInput> {
     if (!_isApplyingTextInput) {
       _syncControllers();
     }
-    if (_suppressOnChanged ||
-        _lastReportedCoordinate == _viewModel.coordinate) {
+    if (_suppressOnChanged || _lastReportedValue == _viewModel.currentValue) {
       return;
     }
-    _lastReportedCoordinate = _viewModel.coordinate;
+    _lastReportedValue = _viewModel.currentValue;
     widget.onChanged?.call(_viewModel.coordinate);
+    widget.onValueChanged?.call(_viewModel.currentValue);
   }
 
   void _syncControllers() {

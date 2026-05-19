@@ -13,9 +13,7 @@ class ExampleApp extends StatelessWidget {
     return MaterialApp(
       title: 'Coordinator Input Example',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0B6E4F),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0B6E4F)),
         useMaterial3: true,
       ),
       home: const ExampleHomePage(),
@@ -35,22 +33,21 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
     latitude: -19.5356,
     longitude: -40.6306,
   );
+  Object? _selectedValue = const EditorCoordinate(
+    latitude: -19.5356,
+    longitude: -40.6306,
+  );
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Coordinator Input Example'),
-      ),
+      appBar: AppBar(title: const Text('Coordinator Input Example')),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Text(
-            'Coordinate editor',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('Coordinate editor', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             'This example uses the public package API and listens to coordinate updates from the widget.',
@@ -64,6 +61,11 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
                 _coordinate = coordinate;
               });
             },
+            onValueChanged: (value) {
+              setState(() {
+                _selectedValue = value;
+              });
+            },
           ),
           const SizedBox(height: 24),
           Card(
@@ -72,15 +74,16 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Selected value',
-                    style: theme.textTheme.titleMedium,
-                  ),
+                  Text('Selected value', style: theme.textTheme.titleMedium),
                   const SizedBox(height: 12),
                   Text(
-                    _coordinate == null
+                    _selectedValue == null
                         ? 'No coordinate selected.'
-                        : 'Latitude: ${_coordinate!.latitude.toStringAsFixed(6)}\nLongitude: ${_coordinate!.longitude.toStringAsFixed(6)}',
+                        : _selectedValue is UtmCoordinate
+                        ? _formatUtm(_selectedValue! as UtmCoordinate)
+                        : _formatGeographic(
+                            _selectedValue! as EditorCoordinate,
+                          ),
                     style: theme.textTheme.bodyLarge,
                   ),
                 ],
@@ -90,5 +93,16 @@ class _ExampleHomePageState extends State<ExampleHomePage> {
         ],
       ),
     );
+  }
+
+  String _formatGeographic(EditorCoordinate coordinate) {
+    return 'Latitude: ${coordinate.latitude.toStringAsFixed(6)}\n'
+        'Longitude: ${coordinate.longitude.toStringAsFixed(6)}';
+  }
+
+  String _formatUtm(UtmCoordinate coordinate) {
+    return 'UTM X: ${coordinate.easting.toStringAsFixed(3)}\n'
+        'UTM Y: ${coordinate.northing.toStringAsFixed(3)}\n'
+        'Zone: ${coordinate.zoneNumber}${coordinate.zoneLetter}';
   }
 }

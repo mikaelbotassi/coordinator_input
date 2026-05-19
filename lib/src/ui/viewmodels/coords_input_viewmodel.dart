@@ -34,6 +34,8 @@ class CoordsInputViewModel extends ChangeNotifier {
   CoordinateInputMode get mode => _mode;
   EditorCoordinate? get coordinate => _coordinate;
   UtmCoordinate? get utmCoordinate => _utmCoordinate;
+  Object? get currentValue =>
+      _mode == CoordinateInputMode.utm ? _utmCoordinate : _coordinate;
   String? get statusMessage {
     final messages = <String>[
       if (_errorMessage != null) _errorMessage!,

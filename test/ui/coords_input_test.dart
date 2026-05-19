@@ -50,6 +50,44 @@ void main() {
     expect(find.textContaining('Zona UTM'), findsOneWidget);
   });
 
+  testWidgets('returns UTM value when current mode is UTM', (tester) async {
+    Object? changedCoordinate;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CoordsInput(
+            initialCoordinate: const EditorCoordinate(
+              latitude: -19.5356,
+              longitude: -40.6306,
+            ),
+            onValueChanged: (coordinate) {
+              changedCoordinate = coordinate;
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('UTM X / Y'));
+    await tester.pump();
+
+    expect(changedCoordinate, isA<UtmCoordinate>());
+
+    await tester.enterText(find.byType(TextField).first, '326240.150');
+    await tester.pump();
+
+    expect(changedCoordinate, isA<UtmCoordinate>());
+    expect(
+      changedCoordinate,
+      isA<UtmCoordinate>().having(
+        (value) => value.easting,
+        'easting',
+        326240.15,
+      ),
+    );
+  });
+
   testWidgets('renders initial UTM values when mode is UTM', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -107,7 +145,7 @@ void main() {
   testWidgets(
     'keeps showing last accuracy after manual edits and parent updates',
     (tester) async {
-      EditorCoordinate? parentCoordinate;
+      Object? parentCoordinate;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -115,12 +153,22 @@ void main() {
             builder: (context, setState) {
               return Scaffold(
                 body: CoordsInput(
-                  initialCoordinate: parentCoordinate,
+                  initialCoordinate: parentCoordinate is EditorCoordinate
+                      ? parentCoordinate as EditorCoordinate
+                      : null,
+                  initialUtmCoordinate: parentCoordinate is UtmCoordinate
+                      ? parentCoordinate as UtmCoordinate
+                      : null,
                   locationService: _FakeLocationService.success(
                     const EditorCoordinate(latitude: 1.23, longitude: 4.56),
                     accuracyInMeters: 8.4,
                   ),
                   onChanged: (coordinate) {
+                    setState(() {
+                      parentCoordinate = coordinate;
+                    });
+                  },
+                  onValueChanged: (coordinate) {
                     setState(() {
                       parentCoordinate = coordinate;
                     });
