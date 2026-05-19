@@ -1,40 +1,67 @@
-import 'package:coordinator_input/coordinator_input.dart';
 import 'package:flutter/material.dart';
 
 class Input extends StatelessWidget {
   const Input({
-    super.key,
+    required this.controller,
+    required this.label,
+    required this.prefixText,
+    this.connectedInput = false,
     this.onChanged,
     this.decoration,
-    required this.controller,
-    this.viewModel,
+    super.key,
   });
 
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
-  final CoordsInputViewModel? viewModel;
   final InputDecoration? decoration;
+  final bool connectedInput;
+  final String prefixText;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(
-        decimal: true,
-        signed: true,
+    final theme = Theme.of(context);
+    final (textTheme, colors) = (theme.textTheme, theme.colorScheme);
+    final borderSide = BorderSide(color: colors.outline);
+    final radius = Radius.circular(4);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        border: BorderDirectional(
+          start: connectedInput ? BorderSide.none : borderSide,
+          end: borderSide, bottom: borderSide, top: borderSide
+        ),
+        borderRadius: BorderRadius.only(
+          bottomRight: connectedInput ? radius : Radius.zero,
+          topRight: connectedInput ? radius : Radius.zero,
+          bottomLeft: connectedInput ? Radius.zero : radius,
+          topLeft: connectedInput ? Radius.zero : radius,
+        )
       ),
-      onChanged: onChanged,
-      decoration:
-          decoration ??
-          InputDecoration(
-            labelText: viewModel?.mode == CoordinateInputMode.geographic
-                ? 'Longitude'
-                : 'UTM Y',
-            hintText: viewModel?.mode == CoordinateInputMode.geographic
-                ? '-40.630600'
-                : '7838581.22',
-            border: const OutlineInputBorder(),
-          ),
+      child: TextField(
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(
+          decimal: true,
+          signed: true,
+        ),
+        onChanged: onChanged,
+        decoration:
+            decoration ??
+            InputDecoration(
+              fillColor: colors.surfaceContainerHigh,
+              hintText: label,
+              prefix: Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                  prefixText,
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colors.outline
+                  )),
+              ),
+              border: InputBorder.none,
+            ),
+      ),
     );
   }
 }

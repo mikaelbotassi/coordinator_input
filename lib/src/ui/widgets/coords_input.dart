@@ -5,6 +5,8 @@ import 'package:coordinator_input/src/plugins/geolocator_location_service.dart';
 import 'package:coordinator_input/src/plugins/location_service.dart';
 import 'package:coordinator_input/src/ui/viewmodels/coords_input_viewmodel.dart';
 import 'package:coordinator_input/src/ui/widgets/input.dart';
+import 'package:coordinator_input/src/ui/widgets/primary_button.dart';
+import 'package:coordinator_input/src/ui/widgets/toggle_button/toggle_button_group.dart';
 import 'package:flutter/material.dart';
 
 class CoordsInput extends StatefulWidget {
@@ -150,42 +152,31 @@ class _CoordsInputState extends State<CoordsInput> {
               Row(
                 spacing: 12,
                 children: [
-                  Expanded(
-                    child: SegmentedButton<CoordinateInputMode>(
-                      segments: const [
-                        ButtonSegment(
-                          value: CoordinateInputMode.geographic,
-                          label: Text('Lat / Long'),
-                          icon: Icon(Icons.public),
-                        ),
-                        ButtonSegment(
-                          value: CoordinateInputMode.utm,
-                          label: Text('UTM X / Y'),
-                          icon: Icon(Icons.grid_on),
-                        ),
-                      ],
-                      selected: {_viewModel.mode},
-                      onSelectionChanged: (selection) =>
-                          _viewModel.setMode(selection.first),
-                    ),
-                  ),
-                  FilledButton.icon(
-                    onPressed:
-                        !_viewModel.canLoadCurrentLocation ||
-                            _viewModel.isLoadingLocation
-                        ? null
-                        : _viewModel.fillWithCurrentLocation,
-                    icon: _viewModel.isLoadingLocation
-                        ? SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: theme.colorScheme.onPrimary,
-                            ),
-                          )
-                        : const Icon(Icons.my_location),
-                    label: const Text('Local atual'),
+                  Expanded(child: ToggleButtonGroup(
+                    onChanged: (selection){
+                      _viewModel.setMode(selection);
+                    },
+                    initialValue: _viewModel.mode,
+                    options: const [
+                      ToggleButtonOption(
+                        value: CoordinateInputMode.geographic,
+                        text: 'Lat / Long',
+                        icon: Icons.public,
+                      ),
+                      ToggleButtonOption(
+                        value: CoordinateInputMode.utm,
+                        text: 'UTM X / Y',
+                        icon: Icons.grid_on,
+                      ),
+                    ],
+                  )),
+                  PrimaryButton(
+                    icon: Icons.my_location,
+                    onPressed: !_viewModel.canLoadCurrentLocation ||
+                      _viewModel.isLoadingLocation
+                      ? null : _viewModel.fillWithCurrentLocation,
+                    enabled: !_viewModel.isLoadingLocation,
+                    text: 'Local atual',
                   ),
                 ],
               ),
@@ -197,40 +188,26 @@ class _CoordsInputState extends State<CoordsInput> {
                   style: theme.textTheme.labelMedium,
                 ),
               Row(
-                spacing: 12,
                 children: [
                   Expanded(
                     child: Input(
                       controller: _firstController,
+                      prefixText: _viewModel.mode == CoordinateInputMode.geographic
+                          ? 'LAT' : 'X',
                       onChanged: _handleFirstChanged,
-                      decoration: InputDecoration(
-                        labelText:
-                            _viewModel.mode == CoordinateInputMode.geographic
-                            ? 'Latitude'
-                            : 'UTM X',
-                        hintText:
-                            _viewModel.mode == CoordinateInputMode.geographic
-                            ? '-19.535600'
-                            : '326230.15',
-                        border: const OutlineInputBorder(),
-                      ),
+                      label: _viewModel.mode == CoordinateInputMode.geographic
+                          ? 'Latitude' : 'UTM X',
                     ),
                   ),
                   Expanded(
                     child: Input(
                       controller: _secondController,
+                      connectedInput: true,
                       onChanged: _handleSecondChanged,
-                      decoration: InputDecoration(
-                        labelText:
-                            _viewModel.mode == CoordinateInputMode.geographic
-                            ? 'Longitude'
-                            : 'UTM Y',
-                        hintText:
-                            _viewModel.mode == CoordinateInputMode.geographic
-                            ? '-40.630600'
-                            : '7838581.22',
-                        border: const OutlineInputBorder(),
-                      ),
+                      prefixText: _viewModel.mode == CoordinateInputMode.geographic
+                          ? 'LON' : 'Y',
+                      label: _viewModel.mode == CoordinateInputMode.geographic
+                          ? 'Longitude' : 'UTM Y',
                     ),
                   ),
                 ],
