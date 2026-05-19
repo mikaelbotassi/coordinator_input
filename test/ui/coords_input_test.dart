@@ -79,6 +79,31 @@ void main() {
     expect(find.text('Zona UTM 24K'), findsOneWidget);
   });
 
+  testWidgets('keeps partially typed coordinate text untouched while editing', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CoordsInput(
+            initialCoordinate: const EditorCoordinate(
+              latitude: -19.5356,
+              longitude: -40.6306,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.enterText(find.byType(TextField).first, '1.');
+    await tester.pump();
+
+    final editableTexts = tester
+        .widgetList<EditableText>(find.byType(EditableText))
+        .toList();
+    expect(editableTexts[0].controller.text, '1.');
+  });
+
   testWidgets(
     'keeps showing last accuracy after manual edits and parent updates',
     (tester) async {

@@ -34,6 +34,7 @@ class _CoordsInputState extends State<CoordsInput> {
   late final TextEditingController _secondController;
   late final CoordsInputViewModel _viewModel;
   bool _isSyncing = false;
+  bool _isApplyingTextInput = false;
   bool _suppressOnChanged = false;
   EditorCoordinate? _lastReportedCoordinate;
 
@@ -59,9 +60,17 @@ class _CoordsInputState extends State<CoordsInput> {
     if (oldWidget.mode != widget.mode && widget.mode != null) {
       _viewModel.setMode(widget.mode!);
     }
-    if (oldWidget.initialCoordinate != widget.initialCoordinate ||
-        oldWidget.initialUtmCoordinate != widget.initialUtmCoordinate ||
-        oldWidget.mode != widget.mode) {
+    final coordinateChanged =
+        oldWidget.initialCoordinate != widget.initialCoordinate;
+    final utmChanged =
+        oldWidget.initialUtmCoordinate != widget.initialUtmCoordinate;
+    final modeChanged = oldWidget.mode != widget.mode;
+    final shouldSyncCoordinate =
+        coordinateChanged && widget.initialCoordinate != _viewModel.coordinate;
+    final shouldSyncUtm =
+        utmChanged && widget.initialUtmCoordinate != _viewModel.utmCoordinate;
+
+    if (shouldSyncCoordinate || shouldSyncUtm || modeChanged) {
       _suppressOnChanged = true;
       _viewModel.setInitialValue(
         coordinate: widget.initialCoordinate,
@@ -86,7 +95,9 @@ class _CoordsInputState extends State<CoordsInput> {
     if (!mounted) {
       return;
     }
-    _syncControllers();
+    if (!_isApplyingTextInput) {
+      _syncControllers();
+    }
     if (_suppressOnChanged ||
         _lastReportedCoordinate == _viewModel.coordinate) {
       return;
@@ -108,6 +119,36 @@ class _CoordsInputState extends State<CoordsInput> {
       composing: TextRange.empty,
     );
     _isSyncing = false;
+  }
+
+  void handleFirstChanged(String value) {
+    if (_isSyncing) {
+      return;
+    }
+    _isApplyingTextInput = true;
+    try {
+      _viewModel.updateFromText(
+        firstText: value,
+        secondText: _secondController.text,
+      );
+    } finally {
+      _isApplyingTextInput = false;
+    }
+  }
+
+  void handleSecondChanged(String value) {
+    if (_isSyncing) {
+      return;
+    }
+    _isApplyingTextInput = true;
+    try {
+      _viewModel.updateFromText(
+        firstText: _firstController.text,
+        secondText: value,
+      );
+    } finally {
+      _isApplyingTextInput = false;
+    }
   }
 
   @override
@@ -134,11 +175,13 @@ class _CoordsInputState extends State<CoordsInput> {
                 viewModel: _viewModel,
                 firstController: _firstController,
                 secondController: _secondController,
-                isSyncing: _isSyncing,
+                onFirstChanged: handleFirstChanged,
+                onSecondChanged: handleSecondChanged,
                 enabled: !_viewModel.isLoadingLocation,
               ),
-              if(_viewModel.mode == CoordinateInputMode.utm || _viewModel.statusMessage != null)
-                CoordinatorInputBottombar(viewModel: _viewModel)
+              if (_viewModel.mode == CoordinateInputMode.utm ||
+                  _viewModel.statusMessage != null)
+                CoordinatorInputBottombar(viewModel: _viewModel),
             ],
           ),
         );

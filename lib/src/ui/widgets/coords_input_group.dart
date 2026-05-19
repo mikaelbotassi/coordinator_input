@@ -8,36 +8,17 @@ class CoordsInputGroup extends StatelessWidget {
     required this.viewModel,
     required this.firstController,
     required this.secondController,
-    required this.isSyncing,
     required this.enabled,
-
+    required this.onFirstChanged,
+    required this.onSecondChanged,
   });
 
   final CoordsInputViewModel viewModel;
   final TextEditingController firstController;
   final TextEditingController secondController;
-  final bool isSyncing;
   final bool enabled;
-
-  void _handleFirstChanged(String value) {
-    if (isSyncing) {
-      return;
-    }
-    viewModel.updateFromText(
-      firstText: value,
-      secondText: secondController.text,
-    );
-  }
-
-  void _handleSecondChanged(String value) {
-    if (isSyncing) {
-      return;
-    }
-    viewModel.updateFromText(
-      firstText: firstController.text,
-      secondText: value,
-    );
-  }
+  final ValueChanged<String> onFirstChanged;
+  final ValueChanged<String> onSecondChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +29,12 @@ class CoordsInputGroup extends StatelessWidget {
             enabled: enabled,
             controller: firstController,
             prefixText: viewModel.mode == CoordinateInputMode.geographic
-                ? 'LAT' : 'X',
-            onChanged: _handleFirstChanged,
+                ? 'LAT'
+                : 'X',
+            onChanged: onFirstChanged,
             label: viewModel.mode == CoordinateInputMode.geographic
-                ? 'Latitude' : 'UTM X',
+                ? 'Latitude'
+                : 'UTM X',
           ),
         ),
         Expanded(
@@ -59,11 +42,13 @@ class CoordsInputGroup extends StatelessWidget {
             controller: secondController,
             connectedInput: true,
             enabled: enabled,
-            onChanged: _handleSecondChanged,
+            onChanged: onSecondChanged,
             prefixText: viewModel.mode == CoordinateInputMode.geographic
-                ? 'LON' : 'Y',
+                ? 'LON'
+                : 'Y',
             label: viewModel.mode == CoordinateInputMode.geographic
-                ? 'Longitude' : 'UTM Y',
+                ? 'Longitude'
+                : 'UTM Y',
           ),
         ),
       ],
