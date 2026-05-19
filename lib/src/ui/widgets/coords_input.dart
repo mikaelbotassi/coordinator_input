@@ -4,6 +4,7 @@ import 'package:coordinator_input/src/domain/enums/coordinate_input_mode.dart';
 import 'package:coordinator_input/src/plugins/geolocator_location_service.dart';
 import 'package:coordinator_input/src/plugins/location_service.dart';
 import 'package:coordinator_input/src/ui/viewmodels/coords_input_viewmodel.dart';
+import 'package:coordinator_input/src/ui/widgets/coordinator_input_bottombar.dart';
 import 'package:coordinator_input/src/ui/widgets/coords_input_group.dart';
 import 'package:coordinator_input/src/ui/widgets/coords_input_topbar.dart';
 import 'package:flutter/material.dart';
@@ -137,29 +138,7 @@ class _CoordsInputState extends State<CoordsInput> {
                 enabled: !_viewModel.isLoadingLocation,
               ),
               if(_viewModel.mode == CoordinateInputMode.utm || _viewModel.statusMessage != null)
-                Row(
-                  children: [
-                    if (_viewModel.mode == CoordinateInputMode.utm)
-                      Expanded(
-                        child: Text(
-                          _viewModel.utmCoordinate == null
-                              ? 'Zona UTM sera definida quando houver coordenada.'
-                              : 'Zona UTM ${_viewModel.utmCoordinate!.zoneNumber}${_viewModel.utmCoordinate!.zoneLetter}',
-                          style: theme.textTheme.labelMedium,
-                        ),
-                      ),
-                    if (_viewModel.statusMessage != null)
-                      Expanded(
-                        child: Text(
-                          _viewModel.statusMessage!,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                          textAlign: TextAlign.end,
-                        ),
-                      ),
-                  ],
-                )
+                CoordinatorInputBottombar(viewModel: _viewModel)
             ],
           ),
         );

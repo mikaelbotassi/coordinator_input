@@ -45,6 +45,7 @@ class CoordsInputGroup extends StatelessWidget {
       children: [
         Expanded(
           child: Input(
+            enabled: enabled,
             controller: firstController,
             prefixText: viewModel.mode == CoordinateInputMode.geographic
                 ? 'LAT' : 'X',

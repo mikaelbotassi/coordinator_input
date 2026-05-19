@@ -42,6 +42,7 @@ class Input extends StatelessWidget {
       ),
       child: TextField(
         enabled: enabled,
+        style: textTheme.bodyMedium,
         controller: controller,
         keyboardType: const TextInputType.numberWithOptions(
           decimal: true,
@@ -57,7 +58,7 @@ class Input extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 8),
                 child: Text(
                   prefixText,
-                  style: textTheme.bodyMedium?.copyWith(
+                  style: textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colors.outline
                   )),
