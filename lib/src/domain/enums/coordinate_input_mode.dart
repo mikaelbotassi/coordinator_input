@@ -1,0 +1,4 @@
+enum CoordinateInputMode {
+  geographic,
+  utm,
+}

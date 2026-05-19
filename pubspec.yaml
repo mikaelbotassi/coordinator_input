@@ -1,0 +1,25 @@
+name: coordinator_input
+description: Coordinate input widget for Flutter with geographic and UTM modes, current location support, and testable MVVM architecture.
+version: 0.0.1
+
+environment:
+  sdk: ^3.8.1
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  geolocator: ^14.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+topics:
+  - maps
+  - coordinates
+  - geolocation
+  - utm
+
+flutter:
