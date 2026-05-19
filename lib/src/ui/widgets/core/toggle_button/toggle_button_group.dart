@@ -65,18 +65,21 @@ class _ToggleButtonGroupState<T extends Object>
     final (index, option) = entry;
 
     return Expanded(
-      child: ToggleButton(
-        onPressed: () {
-          setState(() {
-            _value = option.value;
-          });
-          widget.onChanged(option.value);
-        },
-        active: _value == option.value,
-        icon: option.icon,
-        text: option.text,
-        showEndBorder: index < widget.options.length - 1,
-        key: Key('${option.value} - ${option.text}'),
+      child: SizedBox(
+        height: double.infinity,
+        child: ToggleButton(
+          onPressed: () {
+            setState(() {
+              _value = option.value;
+            });
+            widget.onChanged(option.value);
+          },
+          active: _value == option.value,
+          icon: option.icon,
+          text: option.text,
+          showEndBorder: index < widget.options.length - 1,
+          key: Key('${option.value} - ${option.text}'),
+        ),
       ),
     );
   }).toList();

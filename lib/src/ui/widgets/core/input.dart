@@ -6,6 +6,7 @@ class Input extends StatelessWidget {
     required this.label,
     required this.prefixText,
     this.connectedInput = false,
+    this.enabled = true,
     this.onChanged,
     this.decoration,
     super.key,
@@ -16,6 +17,7 @@ class Input extends StatelessWidget {
   final InputDecoration? decoration;
   final bool connectedInput;
   final String prefixText;
+  final bool enabled;
   final String label;
 
   @override
@@ -39,6 +41,7 @@ class Input extends StatelessWidget {
         )
       ),
       child: TextField(
+        enabled: enabled,
         controller: controller,
         keyboardType: const TextInputType.numberWithOptions(
           decimal: true,

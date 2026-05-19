@@ -4,9 +4,8 @@ import 'package:coordinator_input/src/domain/enums/coordinate_input_mode.dart';
 import 'package:coordinator_input/src/plugins/geolocator_location_service.dart';
 import 'package:coordinator_input/src/plugins/location_service.dart';
 import 'package:coordinator_input/src/ui/viewmodels/coords_input_viewmodel.dart';
-import 'package:coordinator_input/src/ui/widgets/input.dart';
-import 'package:coordinator_input/src/ui/widgets/primary_button.dart';
-import 'package:coordinator_input/src/ui/widgets/toggle_button/toggle_button_group.dart';
+import 'package:coordinator_input/src/ui/widgets/coords_input_group.dart';
+import 'package:coordinator_input/src/ui/widgets/coords_input_topbar.dart';
 import 'package:flutter/material.dart';
 
 class CoordsInput extends StatefulWidget {
@@ -110,26 +109,6 @@ class _CoordsInputState extends State<CoordsInput> {
     _isSyncing = false;
   }
 
-  void _handleFirstChanged(String value) {
-    if (_isSyncing) {
-      return;
-    }
-    _viewModel.updateFromText(
-      firstText: value,
-      secondText: _secondController.text,
-    );
-  }
-
-  void _handleSecondChanged(String value) {
-    if (_isSyncing) {
-      return;
-    }
-    _viewModel.updateFromText(
-      firstText: _firstController.text,
-      secondText: value,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -149,76 +128,38 @@ class _CoordsInputState extends State<CoordsInput> {
             mainAxisSize: MainAxisSize.min,
             spacing: 12,
             children: [
-              Row(
-                spacing: 12,
-                children: [
-                  Expanded(child: ToggleButtonGroup(
-                    onChanged: (selection){
-                      _viewModel.setMode(selection);
-                    },
-                    initialValue: _viewModel.mode,
-                    options: const [
-                      ToggleButtonOption(
-                        value: CoordinateInputMode.geographic,
-                        text: 'Lat / Long',
-                        icon: Icons.public,
-                      ),
-                      ToggleButtonOption(
-                        value: CoordinateInputMode.utm,
-                        text: 'UTM X / Y',
-                        icon: Icons.grid_on,
-                      ),
-                    ],
-                  )),
-                  PrimaryButton(
-                    icon: Icons.my_location,
-                    onPressed: !_viewModel.canLoadCurrentLocation ||
-                      _viewModel.isLoadingLocation
-                      ? null : _viewModel.fillWithCurrentLocation,
-                    enabled: !_viewModel.isLoadingLocation,
-                    text: 'Local atual',
-                  ),
-                ],
+              CoordsInputTopbar(viewModel: _viewModel),
+              CoordsInputGroup(
+                viewModel: _viewModel,
+                firstController: _firstController,
+                secondController: _secondController,
+                isSyncing: _isSyncing,
+                enabled: !_viewModel.isLoadingLocation,
               ),
-              if (_viewModel.mode == CoordinateInputMode.utm)
-                Text(
-                  _viewModel.utmCoordinate == null
-                      ? 'Zona UTM sera definida quando houver coordenada.'
-                      : 'Zona UTM ${_viewModel.utmCoordinate!.zoneNumber}${_viewModel.utmCoordinate!.zoneLetter}',
-                  style: theme.textTheme.labelMedium,
-                ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Input(
-                      controller: _firstController,
-                      prefixText: _viewModel.mode == CoordinateInputMode.geographic
-                          ? 'LAT' : 'X',
-                      onChanged: _handleFirstChanged,
-                      label: _viewModel.mode == CoordinateInputMode.geographic
-                          ? 'Latitude' : 'UTM X',
-                    ),
-                  ),
-                  Expanded(
-                    child: Input(
-                      controller: _secondController,
-                      connectedInput: true,
-                      onChanged: _handleSecondChanged,
-                      prefixText: _viewModel.mode == CoordinateInputMode.geographic
-                          ? 'LON' : 'Y',
-                      label: _viewModel.mode == CoordinateInputMode.geographic
-                          ? 'Longitude' : 'UTM Y',
-                    ),
-                  ),
-                ],
-              ),
-              if (_viewModel.statusMessage != null)
-                Text(
-                  _viewModel.statusMessage!,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
+              if(_viewModel.mode == CoordinateInputMode.utm || _viewModel.statusMessage != null)
+                Row(
+                  children: [
+                    if (_viewModel.mode == CoordinateInputMode.utm)
+                      Expanded(
+                        child: Text(
+                          _viewModel.utmCoordinate == null
+                              ? 'Zona UTM sera definida quando houver coordenada.'
+                              : 'Zona UTM ${_viewModel.utmCoordinate!.zoneNumber}${_viewModel.utmCoordinate!.zoneLetter}',
+                          style: theme.textTheme.labelMedium,
+                        ),
+                      ),
+                    if (_viewModel.statusMessage != null)
+                      Expanded(
+                        child: Text(
+                          _viewModel.statusMessage!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          textAlign: TextAlign.end,
+                        ),
+                      ),
+                  ],
+                )
             ],
           ),
         );
