@@ -3,9 +3,11 @@ import 'package:coordinator_input/src/ui/widgets/core/primary_button.dart';
 import 'package:coordinator_input/src/ui/widgets/core/toggle_button/toggle_button_group.dart';
 import 'package:flutter/material.dart';
 
+/// Header row with mode selector and current-location action.
 class CoordsInputTopbar extends StatelessWidget {
   const CoordsInputTopbar({super.key, required this.viewModel});
 
+  /// View model that controls the current mode and loading state.
   final CoordsInputViewModel viewModel;
 
   @override
@@ -15,29 +17,32 @@ class CoordsInputTopbar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 12,
         children: [
-          Expanded(child: ToggleButtonGroup(
-            onChanged: (selection){
-              viewModel.setMode(selection);
-            },
-            initialValue: viewModel.mode,
-            options: const [
-              ToggleButtonOption(
-                value: CoordinateInputMode.geographic,
-                text: 'Lat / Long',
-                icon: Icons.public,
-              ),
-              ToggleButtonOption(
-                value: CoordinateInputMode.utm,
-                text: 'UTM X / Y',
-                icon: Icons.grid_on,
-              ),
-            ],
-          )),
+          Expanded(
+            child: ToggleButtonGroup(
+              onChanged: (selection) {
+                viewModel.setMode(selection);
+              },
+              initialValue: viewModel.mode,
+              options: const [
+                ToggleButtonOption(
+                  value: CoordinateInputMode.geographic,
+                  text: 'Lat / Long',
+                  icon: Icons.public,
+                ),
+                ToggleButtonOption(
+                  value: CoordinateInputMode.utm,
+                  text: 'UTM X / Y',
+                  icon: Icons.grid_on,
+                ),
+              ],
+            ),
+          ),
           PrimaryButton(
             icon: Icons.my_location,
-            onPressed: !viewModel.canLoadCurrentLocation ||
-                viewModel.isLoadingLocation
-                ? null : viewModel.fillWithCurrentLocation,
+            onPressed:
+                !viewModel.canLoadCurrentLocation || viewModel.isLoadingLocation
+                ? null
+                : viewModel.fillWithCurrentLocation,
             enabled: !viewModel.isLoadingLocation,
             text: 'Local atual',
           ),
@@ -45,5 +50,4 @@ class CoordsInputTopbar extends StatelessWidget {
       ),
     );
   }
-
 }

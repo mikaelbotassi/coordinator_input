@@ -1,6 +1,8 @@
-## 0.0.1
+## 1.0.0
 
-* Converted the project into a reusable Flutter package API.
-* Split the coordinate input into MVVM layers with dedicated domain, application, infrastructure, and UI files.
-* Added unit tests for coordinate conversion and viewmodel behavior.
-* Added widget coverage for the public `CoordsInput` component.
+* Published the first stable release of `coordinator_input`.
+* Added synchronized geographic and UTM editing with public `CoordsInput`.
+* Added support for initializing and emitting values in both geographic and UTM modes.
+* Added `onValueChanged` to expose the currently selected representation without breaking `onChanged`.
+* Added current-location loading with persisted last-known accuracy feedback.
+* Added package-level documentation, inline API docs, MIT license, and a pub.dev-ready example.

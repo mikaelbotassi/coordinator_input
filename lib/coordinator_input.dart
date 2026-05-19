@@ -1,3 +1,4 @@
+// Public package exports for the coordinator input widget and related models.
 export 'src/plugins/location_service.dart';
 export 'src/ui/viewmodels/coords_input_viewmodel.dart';
 export 'src/domain/entities/editor_coordinate.dart';

@@ -12,7 +12,8 @@ The package also supports reading the device's current location through `geoloca
 - Toggle between geographic and UTM input
 - Keep both representations synchronized
 - Start with an initial coordinate
-- Receive updates through `onChanged`
+- Receive geographic updates through `onChanged`
+- Receive updates in the active mode through `onValueChanged`
 - Fill the form with the current device location
 - Test-friendly architecture with separated domain, viewmodel, and infrastructure layers
 
@@ -22,7 +23,7 @@ Add the dependency:
 
 ```yaml
 dependencies:
-  coordinator_input: ^0.0.1
+  coordinator_input: ^1.0.0
 ```
 
 If you want to use current location, configure the native permissions required by `geolocator` in Android and iOS.
@@ -44,12 +45,18 @@ class CoordinateForm extends StatelessWidget {
         longitude: -40.6306,
       ),
       onChanged: (coordinate) {
-        debugPrint('Coordinate: $coordinate');
+        debugPrint('Geographic coordinate: $coordinate');
+      },
+      onValueChanged: (value) {
+        debugPrint('Current mode value: $value');
       },
     );
   }
 }
 ```
+
+When `CoordsInput` is in geographic mode, `onValueChanged` emits an
+`EditorCoordinate`. When it is in UTM mode, it emits a `UtmCoordinate`.
 
 ## Architecture
 
@@ -59,6 +66,10 @@ Public package entrypoint:
 - `EditorCoordinate` and `UtmCoordinate` for domain data
 - `CoordinateConverter` for coordinate transformations
 - `CoordsInputViewModel` and `LocationService` for customization and tests
+
+## License
+
+This package is available under the MIT license.
 
 ## Testing
 

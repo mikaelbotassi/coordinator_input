@@ -1,10 +1,11 @@
+/// Geographic coordinate expressed as latitude and longitude in decimal degrees.
 class EditorCoordinate {
-  const EditorCoordinate({
-    required this.latitude,
-    required this.longitude,
-  });
+  const EditorCoordinate({required this.latitude, required this.longitude});
 
+  /// Latitude in decimal degrees.
   final double latitude;
+
+  /// Longitude in decimal degrees.
   final double longitude;
 
   @override
@@ -21,5 +22,6 @@ class EditorCoordinate {
   int get hashCode => Object.hash(latitude, longitude);
 
   @override
-  String toString() => 'EditorCoordinate(latitude: $latitude, longitude: $longitude)';
+  String toString() =>
+      'EditorCoordinate(latitude: $latitude, longitude: $longitude)';
 }

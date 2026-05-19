@@ -2,14 +2,17 @@ import 'package:coordinator_input/coordinator_input.dart';
 import 'package:coordinator_input/src/domain/entities/location_result.dart';
 import 'package:geolocator/geolocator.dart';
 
-class GeolocatorLocationService implements LocationService{
+/// [LocationService] implementation backed by the `geolocator` plugin.
+class GeolocatorLocationService implements LocationService {
   const GeolocatorLocationService();
 
   @override
   Future<LocationResult> getCurrentCoordinate() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return const LocationResult.failure('Ative o servico de localizacao para continuar.');
+      return const LocationResult.failure(
+        'Ative o servico de localizacao para continuar.',
+      );
     }
 
     var permission = await Geolocator.checkPermission();
@@ -37,7 +40,9 @@ class GeolocatorLocationService implements LocationService{
         accuracyInMeters: position.accuracy,
       );
     } catch (_) {
-      return const LocationResult.failure('Nao foi possivel obter a localizacao atual.');
+      return const LocationResult.failure(
+        'Nao foi possivel obter a localizacao atual.',
+      );
     }
   }
 }

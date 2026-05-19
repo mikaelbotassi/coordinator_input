@@ -11,10 +11,19 @@ class PrimaryButton extends StatelessWidget {
     super.key,
   });
 
+  /// Optional icon shown before the text.
   final IconData? icon;
+
+  /// Action executed when the button is tapped.
   final VoidCallback? onPressed;
+
+  /// Whether the button is enabled.
   final bool enabled;
+
+  /// Optional button label.
   final String? text;
+
+  /// Internal button padding.
   final EdgeInsetsGeometry padding;
 
   @override

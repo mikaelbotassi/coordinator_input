@@ -2,6 +2,7 @@ import 'package:coordinator_input/coordinator_input.dart';
 import 'package:coordinator_input/src/ui/widgets/core/input.dart';
 import 'package:flutter/material.dart';
 
+/// Pair of connected text inputs used to edit the current coordinate values.
 class CoordsInputGroup extends StatelessWidget {
   const CoordsInputGroup({
     super.key,
@@ -13,11 +14,22 @@ class CoordsInputGroup extends StatelessWidget {
     required this.onSecondChanged,
   });
 
+  /// View model that provides labels and formatted values.
   final CoordsInputViewModel viewModel;
+
+  /// Controller bound to the first field.
   final TextEditingController firstController;
+
+  /// Controller bound to the second field.
   final TextEditingController secondController;
+
+  /// Whether the fields are currently editable.
   final bool enabled;
+
+  /// Called when the first field changes.
   final ValueChanged<String> onFirstChanged;
+
+  /// Called when the second field changes.
   final ValueChanged<String> onSecondChanged;
 
   @override

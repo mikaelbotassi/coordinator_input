@@ -5,7 +5,9 @@ import 'package:coordinator_input/src/plugins/coordinate_converter.dart';
 import 'package:coordinator_input/src/plugins/location_service.dart';
 import 'package:flutter/foundation.dart';
 
+/// View model that drives [CoordsInput] text values, mode and status messages.
 class CoordsInputViewModel extends ChangeNotifier {
+  /// Creates a new view model with optional initial geographic or UTM values.
   CoordsInputViewModel({
     EditorCoordinate? initialCoordinate,
     UtmCoordinate? initialUtmCoordinate,
@@ -31,14 +33,23 @@ class CoordsInputViewModel extends ChangeNotifier {
   double? _lastAccuracyInMeters;
   bool _isLoadingLocation = false;
 
+  /// Current editing mode.
   CoordinateInputMode get mode => _mode;
+
+  /// Current geographic coordinate, regardless of the active mode.
   EditorCoordinate? get coordinate => _coordinate;
+
+  /// Current UTM coordinate, if available.
   UtmCoordinate? get utmCoordinate => _utmCoordinate;
+
+  /// Current value represented by the active [mode].
   Object? get currentValue =>
       _mode == CoordinateInputMode.utm ? _utmCoordinate : _coordinate;
+
+  /// User-facing status text combining location errors and last known accuracy.
   String? get statusMessage {
     final messages = <String>[
-      if (_errorMessage != null) _errorMessage!,
+      ?_errorMessage,
       if (_lastAccuracyInMeters != null)
         'Precisao estimada: ${_lastAccuracyInMeters!.toStringAsFixed(1)} m',
     ];
@@ -48,9 +59,13 @@ class CoordsInputViewModel extends ChangeNotifier {
     return messages.join('\n');
   }
 
+  /// Whether the view model is retrieving the current device location.
   bool get isLoadingLocation => _isLoadingLocation;
+
+  /// Whether a [LocationService] is available for current-location lookup.
   bool get canLoadCurrentLocation => _locationService != null;
 
+  /// First input value formatted for the active [mode].
   String get firstValue {
     if (_coordinate == null ||
         (_mode == CoordinateInputMode.utm && _utmCoordinate == null)) {
@@ -62,6 +77,7 @@ class CoordsInputViewModel extends ChangeNotifier {
     return formatDecimal(_utmCoordinate!.easting, fractionDigits: 3);
   }
 
+  /// Second input value formatted for the active [mode].
   String get secondValue {
     if (_coordinate == null ||
         (_mode == CoordinateInputMode.utm && _utmCoordinate == null)) {
@@ -73,6 +89,7 @@ class CoordsInputViewModel extends ChangeNotifier {
     return formatDecimal(_utmCoordinate!.northing, fractionDigits: 3);
   }
 
+  /// Changes the active editing [mode].
   void setMode(CoordinateInputMode mode) {
     if (_mode == mode) {
       return;
@@ -81,6 +98,7 @@ class CoordsInputViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Sets the initial value based on the active [mode].
   void setInitialValue({
     EditorCoordinate? coordinate,
     UtmCoordinate? utmCoordinate,
@@ -124,6 +142,7 @@ class CoordsInputViewModel extends ChangeNotifier {
     setCoordinate(null, notifyListeners: notifyListeners);
   }
 
+  /// Replaces the current geographic [coordinate] and recalculates UTM.
   void setCoordinate(
     EditorCoordinate? coordinate, {
     bool notifyListeners = true,
@@ -136,6 +155,7 @@ class CoordsInputViewModel extends ChangeNotifier {
     }
   }
 
+  /// Updates the current value from the raw text entered in the two fields.
   EditorCoordinate? updateFromText({
     required String firstText,
     required String secondText,
@@ -185,6 +205,7 @@ class CoordsInputViewModel extends ChangeNotifier {
     return nextCoordinate;
   }
 
+  /// Loads the device current location and updates the state accordingly.
   Future<EditorCoordinate?> fillWithCurrentLocation() async {
     final locationService = _locationService;
     if (locationService == null || _isLoadingLocation) {
@@ -235,6 +256,7 @@ class CoordsInputViewModel extends ChangeNotifier {
   }
 }
 
+/// Formats numeric values for field display.
 String formatDecimal(double value, {int fractionDigits = 6}) {
   return value.toStringAsFixed(fractionDigits);
 }

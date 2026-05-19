@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Stylized text field used by the coordinate input widget.
 class Input extends StatelessWidget {
   const Input({
     required this.controller,
@@ -12,12 +13,25 @@ class Input extends StatelessWidget {
     super.key,
   });
 
+  /// Text controller associated with the field.
   final TextEditingController controller;
+
+  /// Callback invoked when the field text changes.
   final ValueChanged<String>? onChanged;
+
+  /// Optional custom decoration override.
   final InputDecoration? decoration;
+
+  /// Whether this field is visually connected to a previous sibling input.
   final bool connectedInput;
+
+  /// Short prefix label displayed inside the field.
   final String prefixText;
+
+  /// Whether the field can be edited.
   final bool enabled;
+
+  /// Placeholder text shown when the field is empty.
   final String label;
 
   @override
@@ -31,14 +45,16 @@ class Input extends StatelessWidget {
       decoration: BoxDecoration(
         border: BorderDirectional(
           start: connectedInput ? BorderSide.none : borderSide,
-          end: borderSide, bottom: borderSide, top: borderSide
+          end: borderSide,
+          bottom: borderSide,
+          top: borderSide,
         ),
         borderRadius: BorderRadius.only(
           bottomRight: connectedInput ? radius : Radius.zero,
           topRight: connectedInput ? radius : Radius.zero,
           bottomLeft: connectedInput ? Radius.zero : radius,
           topLeft: connectedInput ? Radius.zero : radius,
-        )
+        ),
       ),
       child: TextField(
         enabled: enabled,
@@ -60,8 +76,9 @@ class Input extends StatelessWidget {
                   prefixText,
                   style: textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: colors.outline
-                  )),
+                    color: colors.outline,
+                  ),
+                ),
               ),
               border: InputBorder.none,
             ),

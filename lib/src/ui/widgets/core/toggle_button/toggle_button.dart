@@ -11,10 +11,19 @@ class ToggleButton extends StatelessWidget {
     super.key,
   });
 
+  /// Whether this option is currently selected.
   final bool active;
+
+  /// Whether the separator on the trailing edge should be shown.
   final bool showEndBorder;
+
+  /// Optional label text.
   final String? text;
+
+  /// Optional leading icon.
   final IconData? icon;
+
+  /// Callback triggered when the option is tapped.
   final VoidCallback onPressed;
 
   @override

@@ -9,6 +9,7 @@ import 'package:coordinator_input/src/ui/widgets/coords_input_group.dart';
 import 'package:coordinator_input/src/ui/widgets/coords_input_topbar.dart';
 import 'package:flutter/material.dart';
 
+/// Composite coordinate input widget with geographic and UTM editing modes.
 class CoordsInput extends StatefulWidget {
   const CoordsInput({
     this.initialCoordinate,
@@ -20,11 +21,22 @@ class CoordsInput extends StatefulWidget {
     super.key,
   });
 
+  /// Initial geographic coordinate displayed by the widget.
   final EditorCoordinate? initialCoordinate;
+
+  /// Initial UTM coordinate used when the active mode is [CoordinateInputMode.utm].
   final UtmCoordinate? initialUtmCoordinate;
+
+  /// Callback that always emits the geographic representation.
   final ValueChanged<EditorCoordinate?>? onChanged;
+
+  /// Callback that emits the value matching the active input mode.
   final ValueChanged<Object?>? onValueChanged;
+
+  /// Service used to fetch the current device location.
   final LocationService? locationService;
+
+  /// Initial input mode.
   final CoordinateInputMode? mode;
 
   @override

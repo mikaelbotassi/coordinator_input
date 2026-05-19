@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 
 /// Describes a selectable option inside [ToggleButtonGroup].
 class ToggleButtonOption<T extends Object> {
-  const ToggleButtonOption({
-    required this.value,
-    this.icon,
-    this.text,
-  });
+  const ToggleButtonOption({required this.value, this.icon, this.text});
 
+  /// Optional icon rendered for the option.
   final IconData? icon;
+
+  /// Optional text rendered for the option.
   final String? text;
+
+  /// Value emitted when the option is selected.
   final T value;
 }
 
@@ -23,8 +24,13 @@ class ToggleButtonGroup<T extends Object> extends StatefulWidget {
     super.key,
   });
 
+  /// Available options displayed by the group.
   final List<ToggleButtonOption<T>> options;
+
+  /// Initially selected value.
   final T? initialValue;
+
+  /// Callback fired when the selected option changes.
   final ValueChanged<T> onChanged;
 
   @override
@@ -54,10 +60,7 @@ class _ToggleButtonGroupState<T extends Object>
         ),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: buttons,
-      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: buttons),
     );
   }
 
